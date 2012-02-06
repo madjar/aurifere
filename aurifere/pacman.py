@@ -11,23 +11,21 @@ def get_package_version(pkg):
     return db.get_pkg(pkg).version
 
 
-# TODO : import all foreign packages
-
-
 def get_sync_packages():
     """Returns a set containing all the packages in the sync database.
     The result is cached."""
+    # TODO cache
     syncpkgs = set()
     for syncdb in handle.get_syncdbs():
         syncpkgs |= set(p.name for p in syncdb.pkgcache)
     return syncpkgs
 
 
-#def get_foreign_packages():
-#    """Returns all the foreign packages installed on the system (packages not
-#    available in any sync database)."""
-#    syncpkgs = get_sync_packages()
-#    return [p.name for p in db.pkgcache if not p.name in syncpkgs]
+def get_foreign_packages():
+    """Returns all the foreign packages installed on the system (packages not
+    available in any sync database)."""
+    syncpkgs = get_sync_packages()
+    return [p.name for p in db.pkgcache if not p.name in syncpkgs]
 
 
 def get_satisfier_in_syncdb(pkg):

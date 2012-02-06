@@ -1,5 +1,7 @@
 import os
 import subprocess
+from aurifere.pacman import installed
+from aurifere.pkgbuild import version_is_greater
 from .git import Git
 from .pkgbuild import PKGBUILD
 
@@ -55,6 +57,10 @@ class Package:
     def version(self):
         """Returns the version of the package in the repository."""
         return self.pkgbuild().version()
+
+    def upgrade_available(self):
+        pkg = installed(self.name)
+        return pkg and version_is_greater(self.version(), pkg.version)
 
     def update_from_upstream(self):
         self._git.switch_branch('upstream')

@@ -33,7 +33,7 @@ class Git:
                                '--template',
                                os.path.join(os.path.dirname(__file__),
                                             'git-templates')))
-        self._git('commit', '--allow-empty', '-m', 'Initial commit')
+        self._git('commit', '--allow-empty', '--quiet', '-m', 'Initial commit')
 
     def clean(self):
         self._git('clean', '--quiet', '--force')

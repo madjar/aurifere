@@ -1,5 +1,7 @@
 from collections import defaultdict
 from .aur import load_aur_cache
+from aurifere.aur import NotInAURException
+from aurifere.pacman import get_foreign_packages
 from .pacman import installed
 from .repository import PackageNotInRepositoryException
 
@@ -34,6 +36,18 @@ class Install:
         load_aur_cache(pkgs)
         for pkg in pkgs:
             self.add_package(self.repo.package(pkg), force=True)
+
+    def update_aur(self):
+        # TODO report packages not un aur
+        pkg_names = get_foreign_packages()
+        load_aur_cache(pkg_names)
+        for pkg_name in pkg_names:
+            try:
+                pkg = self.repo.package(pkg_name)
+                if pkg.upgrade_available():
+                    self.add_package(pkg, force=True)
+            except PackageNotInRepositoryException:
+                continue
 
     def fetch_all(self):
         for pkg in self.to_install:
