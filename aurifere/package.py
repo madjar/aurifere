@@ -95,3 +95,7 @@ class Package:
                                '--noconfirm'],
             cwd=self.dir)
         self._git.clean()
+
+    def mark_as_dep(self):
+        subprocess.check_call(['sudo', 'pacman', '--database', '--asdeps',
+                               self.name])

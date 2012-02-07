@@ -68,3 +68,5 @@ class Install:
     def install(self):
         for pkg in self.to_install:
             pkg.build_and_install()
+        for dep in self.dependencies:
+            dep.mark_as_dep()
