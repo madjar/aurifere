@@ -18,10 +18,9 @@ class PKGBUILD:
     def _parse(self):
         """Parses the PKGBUILD file."""
         # Parsing code stolen and adapted from https://github.com/sebnow/aur2/
+        # TODO : PKGBUILD cache
         logger.debug('Parsing %s', self.path)
-        script_dir = os.path.dirname(__file__)
-        if not script_dir:
-            script_dir = os.path.abspath(script_dir)
+        script_dir = os.path.abspath(os.path.dirname(__file__))
         output = subprocess.check_output([os.path.join(script_dir,
                                                        'parsepkgbuild.sh'),
                                           'PKGBUILD'],
@@ -46,7 +45,7 @@ class PKGBUILD:
 def try_int(x):
     try:
         return int(x)
-    except:
+    except ValueError:
         return x
 
 def version_is_greater(v1, v2):

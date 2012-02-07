@@ -1,9 +1,7 @@
 import os
 import logging
 import shelve
-from contextlib import closing
 from XyneXDG.BaseDirectory import get_data_home
-import atexit
 from .aur import AurPackage, NotInAURException
 from .package import Package
 
@@ -22,7 +20,9 @@ class Repository:
 
         self._open_packages = {}
         self.db = shelve.open(os.path.join(self.dir, 'types.db'))
-        atexit.register(self.db.close)
+
+    def __del__(self):
+        self.db.close()
 
     def __repr__(self):
         return '<Repository("{}")>'.format(self.dir)
@@ -48,7 +48,7 @@ class Repository:
             self.db[name] = type
             self._open_packages[name] = package
         return self._open_packages[name]
-
+#TODO : treat dev packages separately
 
 def default_repository():
     return Repository(os.path.join(get_data_home(), 'aurifere'))

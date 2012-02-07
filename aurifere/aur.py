@@ -4,19 +4,45 @@ import tarfile
 import os
 import shutil
 import AUR
+from XyneXDG.BaseDirectory import get_data_home
 from .pacman import get_satisfier_in_syncdb
 from .package import Package, NoPKGBUILDException
 
+
+NOT_IN_AUR_FILENAME = os.path.join(os.path.join(get_data_home(), 'aurifere'),
+                                   'not_in_aur')
 logger = logging.getLogger(__name__)
 
 
 class _LoggingAUR(AUR.AUR):
-    """Subclass of ``AUR.AUR`` with proper logging"""
+    """Subclass of ``AUR.AUR`` with proper logging and not_in_aur caching"""
 
     logger = logging.getLogger("python3-aur")
 
     def log(self, msg):
         self.logger.debug(msg)
+
+    def __init__(self):
+        super().__init__()
+        with open(NOT_IN_AUR_FILENAME) as f:
+            self.not_in_aur = set(f.read().split())
+
+    def __del__(self):
+        with open(NOT_IN_AUR_FILENAME, 'w') as f:
+            f.write('\n'.join(self.not_in_aur))
+
+    def info(self, pkgs):
+        if isinstance(pkgs, str):
+            pkgs = [pkgs]
+
+        pkgs = {pkg for pkg in pkgs if pkg not in self.not_in_aur}
+        result = super().info(pkgs)
+        if result:
+            for r in result:
+                pkgs.remove(r['Name'])
+
+        self.not_in_aur.update(pkgs)
+        return result
 
 
 _aur_object = None
