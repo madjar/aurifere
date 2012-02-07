@@ -1,8 +1,8 @@
 import os
 import logging
 import shelve
-from XyneXDG.BaseDirectory import get_data_home
 from .aur import AurPackage, NotInAURException
+from .common import DATA_DIR
 from .package import Package
 
 logger = logging.getLogger(__name__)
@@ -51,4 +51,4 @@ class Repository:
 #TODO : treat dev packages separately
 
 def default_repository():
-    return Repository(os.path.join(get_data_home(), 'aurifere'))
+    return Repository(DATA_DIR)

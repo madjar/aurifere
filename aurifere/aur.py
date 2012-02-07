@@ -4,13 +4,12 @@ import tarfile
 import os
 import shutil
 import AUR
-from XyneXDG.BaseDirectory import get_data_home
+from .common import DATA_DIR
 from .pacman import get_satisfier_in_syncdb
 from .package import Package, NoPKGBUILDException
 
 
-NOT_IN_AUR_FILENAME = os.path.join(os.path.join(get_data_home(), 'aurifere'),
-                                   'not_in_aur')
+NOT_IN_AUR_FILENAME = os.path.join(DATA_DIR, 'not_in_aur')
 logger = logging.getLogger(__name__)
 
 
