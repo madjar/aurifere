@@ -1,9 +1,13 @@
+import logging
 import os
 import subprocess
 from aurifere.pacman import installed
 from aurifere.pkgbuild import version_is_greater
 from .git import Git
 from .pkgbuild import PKGBUILD
+
+
+logger = logging.getLogger(__name__)
 
 
 class NoPKGBUILDException(Exception):
@@ -35,7 +39,7 @@ class Package:
         # To avoid losing anything, we refuse to work on unclean working dir
         modified_files = self._git.status()
         if modified_files:
-            raise WorkingDirNotCleanException(modified_files)
+            raise WorkingDirNotCleanException(self.name, modified_files)
 
         if not os.path.exists(os.path.join(self.dir, "PKGBUILD")):
             self.update_from_upstream()
@@ -58,9 +62,14 @@ class Package:
         """Returns the version of the package in the repository."""
         return self.pkgbuild().version()
 
+    def upstream_version(self):
+        return None
+
     def upgrade_available(self):
         pkg = installed(self.name)
-        return pkg and version_is_greater(self.version(), pkg.version)
+        upstream_version = self.upstream_version()
+        return (pkg and upstream_version and
+                version_is_greater(upstream_version, pkg.version))
 
     def update_from_upstream(self):
         self._git.switch_branch('upstream')
@@ -95,6 +104,12 @@ class Package:
                                '--noconfirm'],
             cwd=self.dir)
         self._git.clean()
+
+        if self._git.status():
+            logger.warn('Package %s had to be cleaned after build. '+
+                'This is probably a devel package. This will be handled'+
+                'in a future version', self.name)
+            self._git._git('reset', '--hard', '--quiet')
 
     def mark_as_dep(self):
         subprocess.check_call(['sudo', 'pacman', '--database', '--asdeps',

@@ -81,7 +81,7 @@ class AurPackage(Package):
         self.aur_info = aur_info_result[0]
         super().__init__(name, repository)
 
-    def aur_version(self):
+    def upstream_version(self):
         """Returns the version of the package in AUR."""
         return self.aur_info['Version']
 
@@ -113,12 +113,10 @@ class AurPackage(Package):
             version = self.version()
         except NoPKGBUILDException:
             version = None
-        aur_version = self.aur_version()
+        aur_version = self.upstream_version()
         if not version or version != aur_version:
             self._purge()
             self._download()
             self._pkgbuild = None  # Invalidate the cache
             return aur_version
         return None
-
-# TODO : cache the fact that the packages are not in aur

@@ -22,3 +22,18 @@ class PkgbuildTest(unittest.TestCase):
         p = self._get_pkgbuild()
         self.assertEqual(list(p.all_depends()),
             ['python2', 'setuptools', 'fakedepend'])
+
+
+class VersionCompareTest(unittest.TestCase):
+    def _get_FUT(self):
+        from aurifere.pkgbuild import version_is_greater
+        return version_is_greater
+
+    def test_classic_dotted_version_equals(self):
+        self.assertFalse(self._get_FUT()('2.12.4-5', '2.12.4-5'))
+
+    def test_classic_dotted_version_greater(self):
+        self.assertTrue(self._get_FUT()('2.0.2-1', '2.0.1-2'))
+
+    def test_classic_dotted_version_lesser(self):
+        self.assertFalse(self._get_FUT()('2.0.1-2', '2.0.2-1'))
