@@ -13,13 +13,11 @@ With Aurifere, installing packages from AUR is not a pain in the neck any more :
 Installing
 ----------
 
-Aurifere is on AUR ! Just install aurifere__ the usual way.
+.. Aurifere is on AUR ! Just install aurifere__ the usual way.
 
-__ link
+There is no stable release of Aurifere yet, but if you are feeling adventurous, install `aurifere-git`__ from AUR.
 
-If you are feeling adventurous, install `aurifere-git`__ from AUR.
-
-__ link
+__ http://aur.archlinux.org/packages.php?ID=56754
 
 
 Usage
@@ -50,7 +48,7 @@ Aurifere creates a git repository for each package, and commit each version down
 
 It may seem overkill to use git, but I aim to support automatic patching of new versions (like when you want to add a compile flag each time you update a package).
 
-I also have a long-term vision of a git-based AUR where creating updated PKGBUILD and variants would be as easy as forking and merging is on github. 
+I also have a long-term vision of a git-based AUR where creating updated PKGBUILD and variants would be as easy as forking and merging is on github.
 
 Hacking
 -------
