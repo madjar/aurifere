@@ -38,7 +38,7 @@ Install one or many packages, including their dependencies
 Updates all the packages installed from AUR on your system.
 
 
-Aurifere is only a AUR wrapper and can't replace pacman. What I do is using yaourt to the usual way, and start aurifere whan yaourt tells me there is some update.
+Aurifere is only a AUR wrapper and can't replace pacman. What I do is using yaourt to the usual way, and start aurifere when yaourt tells me there is some update.
 
 
 Explaination
