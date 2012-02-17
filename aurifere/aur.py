@@ -26,6 +26,8 @@ class _LoggingAUR(AUR.AUR):
         if os.path.exists(NOT_IN_AUR_FILENAME):
             with open(NOT_IN_AUR_FILENAME) as f:
                 self.not_in_aur = set(f.read().split())
+        else:
+            self.not_in_aur = set()
 
     def __del__(self):
         with open(NOT_IN_AUR_FILENAME, 'w') as f:
