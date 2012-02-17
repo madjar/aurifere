@@ -35,6 +35,8 @@ def review_and_install(installer):
         print('Nothing to do')
         return
 
+    installer.fetch_all()
+
     pacman_dependencies = installer.pacman_dependencies()
     packages_to_review = installer.packages_to_review()
 
@@ -54,7 +56,6 @@ def review_and_install(installer):
     if input('Do you confirm (y|n)') != 'y':
         return
 
-    installer.fetch_all()
     for package in packages_to_review:
         review_package(installer, package)
 

@@ -23,6 +23,7 @@ class Install:
                 self._pacman_dependencies[package].append(dep)
 
     def add_package(self, pkg, force=False, install_before=False):
+        # TODO : fetch package before extracting any information
         if not force and installed(pkg.name):
             return
         if not pkg in self.to_install:
