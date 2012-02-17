@@ -1,9 +1,20 @@
 import logging
 import subprocess
 import os
+import tempfile
+import atexit
 
 
 logger = logging.getLogger(__name__)
+
+
+_empty_dir = None
+def get_empty_dir():
+    global _empty_dir
+    if not _empty_dir:
+        _empty_dir = tempfile.mkdtemp()
+        atexit.register(lambda: os.rmdir(_empty_dir))
+    return _empty_dir
 
 
 class Git:
@@ -30,9 +41,7 @@ class Git:
         """Initializes the git repository"""
         logger.debug("Initializing git repo in %s", self.dir)
         subprocess.check_call(('git', 'init', '--quiet', self.dir,
-                               '--template',
-                               os.path.join(os.path.dirname(__file__),
-                                            'git-templates')))
+                               '--template', get_empty_dir()))
         self._git('commit', '--allow-empty', '--quiet', '-m', 'Initial commit')
 
     def clean(self):

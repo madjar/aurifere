@@ -41,8 +41,8 @@ Updates all the packages installed from AUR on your system.
 Aurifere is only a AUR wrapper and can't replace pacman. What I do is using yaourt to the usual way, and start aurifere when yaourt tells me there is some update.
 
 
-Explaination
-------------
+Explanation
+-----------
 
 Aurifere creates a git repository for each package, and commit each version downloaded from AUR. This way, we get a free diff !
 
