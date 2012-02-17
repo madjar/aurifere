@@ -23,8 +23,9 @@ class _LoggingAUR(AUR.AUR):
 
     def __init__(self):
         super().__init__()
-        with open(NOT_IN_AUR_FILENAME) as f:
-            self.not_in_aur = set(f.read().split())
+        if os.path.exists(NOT_IN_AUR_FILENAME):
+            with open(NOT_IN_AUR_FILENAME) as f:
+                self.not_in_aur = set(f.read().split())
 
     def __del__(self):
         with open(NOT_IN_AUR_FILENAME, 'w') as f:
