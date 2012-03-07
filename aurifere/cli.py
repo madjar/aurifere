@@ -1,4 +1,4 @@
-import plac
+import argh
 import colorama
 from .install import Install
 from .repository import default_repository
@@ -62,26 +62,33 @@ def review_and_install(installer):
     installer.install()
 
 
-class Commands:
-    commands = 'install', 'update'
+# Here are the commands :
 
-    def install(self, *pkgs):
-        installer = Install(default_repository())
-        installer.add_packages(pkgs)
-        review_and_install(installer)
+@argh.arg('package', nargs='+')
+def install(args):
+    installer = Install(default_repository())
+    installer.add_packages(args.package)
+    review_and_install(installer)
 
-    def update(self, verbose :(None, 'flag', 'v')):
-        if verbose:
-            import logging
-            logging.basicConfig(level=logging.DEBUG)
-        installer = Install(default_repository())
-        installer.update_aur()
-        review_and_install(installer)
+
+@argh.plain_signature
+def update():
+    installer = Install(default_repository())
+    installer.update_aur()
+    review_and_install(installer)
+
+
+def activate_logging(args):
+    if args.verbose:
+        import logging
+        logging.basicConfig(level=logging.DEBUG)
 
 
 def main():
-    plac.call(Commands())
-
+    parser = argh.ArghParser()
+    parser.add_commands([install, update])
+    parser.add_argument('--verbose', '-v', action='store_true')
+    parser.dispatch(pre_call=activate_logging)
 
 if __name__ == '__main__':
     main()
