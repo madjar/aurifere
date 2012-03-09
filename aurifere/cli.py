@@ -22,7 +22,7 @@ def review_package(install, package):
         print('This package is required by {}'
         .format(comma_separated_package_list(install.dependencies[package])))
     input('About to show diff ...')
-    package._git._git('diff', 'reviewed')
+    package._git._git('diff', 'reviewed', '--color')
     if input('Validate review for {}? (y|n) '.format(hl(package.name))) == 'y':
         package.validate_review()
     else:
