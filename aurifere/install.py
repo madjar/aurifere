@@ -67,7 +67,9 @@ class Install:
         return result
 
     def install(self):
+        to_mark_as_dependencies = [p for p in self.dependencies
+                                   if not installed(p.name)]
         for pkg in self.to_install:
             pkg.build_and_install()
-        for dep in self.dependencies:
-            dep.mark_as_dep()
+        for dep in to_mark_as_dependencies:
+            dep.mark_as_dependency()

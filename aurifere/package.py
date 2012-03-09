@@ -111,6 +111,6 @@ class Package:
                 'in a future version', self.name)
             self._git._git('reset', '--hard', '--quiet')
 
-    def mark_as_dep(self):
+    def mark_as_dependency(self):
         subprocess.check_call(['sudo', 'pacman', '--database', '--asdeps',
                                self.name])
