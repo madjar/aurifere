@@ -32,7 +32,14 @@ class Repository:
             if name in self.db:
                 type = self.db[name]
             if type == "aur":
-                package = AurPackage(name, self)
+                try:
+                    package = AurPackage(name, self)
+                except NotInAURException:
+                    package = Package(name, self)
+                    logger.warn('Package %s used to be in AUR but is not any '
+                                'more. You may want to find an alternative. '
+                                'To remove this message, delete the folder %s .'
+                        %(name, package.dir))
             elif type == "manual":
                 package = Package(name, self)
             elif type == "default":
