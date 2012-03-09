@@ -15,8 +15,7 @@ class PackageNotInRepositoryException(Exception):
 class Repository:
     def __init__(self, dir):
         self.dir = dir
-        if not os.path.isdir(self.dir):
-            os.mkdir(self.dir)
+        os.makedirs(self.dir, exist_ok=True)
 
         self._open_packages = {}
         self.db = shelve.open(os.path.join(self.dir, 'types.db'))
