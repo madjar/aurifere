@@ -23,7 +23,8 @@ def review_package(install, package):
         .format(comma_separated_package_list(install.dependencies[package])))
     input('About to show diff ...')
     package._git._git('diff', 'reviewed', '--color')
-    if input('Validate review for {}? (y|n) '.format(hl(package.name))) == 'y':
+    if argh.confirm('Validate review for {} '.format(hl(package.name)),
+                    default=True):
         package.validate_review()
     else:
         # TODO : maybe we can be a little more diplomatic
@@ -53,7 +54,7 @@ def review_and_install(installer):
         print('Packages to review : {}'
         .format(comma_separated_package_list(packages_to_review)))
 
-    if input('Do you confirm (y|n)') != 'y':
+    if not argh.confirm('Do you confirm', default=True):
         return
 
     for package in packages_to_review:
