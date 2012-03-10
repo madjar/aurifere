@@ -1,7 +1,7 @@
 # Maintainer: Georges Dubus <georges.dubus@compiletoi.net>
 pkgname=aurifere-git
-pkgver=20120217
-pkgrel=2
+pkgver=20120310
+pkgrel=1
 pkgdesc="AUR wrapper for lazy people"
 arch=('any')
 url="https://github.com/madjar/aurifere"
