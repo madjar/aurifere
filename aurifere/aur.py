@@ -72,8 +72,6 @@ class NotInAURException(Exception):
 class AurPackage(Package):
     """Represents an AUR package and handles the download."""
     def __init__(self, name, repository):
-        logger.debug("Checking that the package %s is in AUR", name)
-
         if get_satisfier_in_syncdb(name):
             # package in the syncdb, so not in AUR
             raise NotInAURException(name)

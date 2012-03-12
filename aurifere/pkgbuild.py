@@ -7,6 +7,7 @@ import ast
 import logging
 import itertools
 import atexit
+import pyalpm
 from aurifere.common import DATA_DIR
 
 
@@ -57,24 +58,5 @@ class PKGBUILD:
             yield dep.translate({60: '=', 62: '='}).split('=')[0]
 
 
-def try_int(x):
-    try:
-        return int(x)
-    except ValueError:
-        return x
-
 def version_is_greater(v1, v2):
-    major1, minor1 = v1.split('-')
-    major2, minor2 = v2.split('-')
-    vtuple1 = tuple(map(try_int, major1.split('.')))
-    vtuple2 = tuple(map(try_int, major2.split('.')))
-    if vtuple1 > vtuple2:
-        return True
-    elif  vtuple1 < vtuple2:
-        return False
-    else:
-        if minor1 > minor2:
-            return True
-        else:
-            return False
-
+    return pyalpm.vercmp(v1, v2) == 1

@@ -50,7 +50,7 @@ class Repository:
             else:
                 raise ValueError("Unsupported value for argument type",
                                  type)
-            logger.debug('Creating a Package object of type %s', type)
+            logger.debug('Adding %s of type %s to the repository', name, type)
             self.db[name] = type
             self._open_packages[name] = package
         return self._open_packages[name]

@@ -37,3 +37,6 @@ class VersionCompareTest(unittest.TestCase):
 
     def test_classic_dotted_version_lesser(self):
         self.assertFalse(self._get_FUT()('2.0.1-2', '2.0.2-1'))
+
+    def test_ugly_version_numbers(self):
+        self.assertTrue(self._get_FUT()('1.0.27.206_r0-1', '1.0.27.206-1'))
