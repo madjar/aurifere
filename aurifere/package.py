@@ -100,16 +100,18 @@ class Package:
         if self.review_needed():
             raise NotReviewedException()
 
-        subprocess.check_call(['makepkg', '--clean', '--syncdeps', '--install',
+        try:
+            subprocess.check_call(['makepkg', '--clean', '--syncdeps', '--install',
                                '--noconfirm'],
             cwd=self.dir)
-        self._git.clean()
+        finally:
+            self._git.clean()
 
-        if self._git.status():
-            logger.warn('Package %s had to be cleaned after build. '+
-                'This is probably a devel package. This will be handled'+
-                'in a future version', self.name)
-            self._git._git('reset', '--hard', '--quiet')
+            if self._git.status():
+                logger.warn('Package %s had to be cleaned after build. '+
+                    'This is probably a devel package. This will be handled'+
+                    'in a future version', self.name)
+                self._git._git('reset', '--hard', '--quiet')
 
     def mark_as_dependency(self):
         subprocess.check_call(['sudo', 'pacman', '--database', '--asdeps',
