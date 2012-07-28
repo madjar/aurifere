@@ -89,7 +89,25 @@ class Package:
         self._git._git('reset', '--hard', 'upstream', '--quiet')
 
     def review_needed(self):
-        return self._git.ref('reviewed') != self._git.ref('master')
+        if self._git.ref('reviewed') != self._git.ref('master'):
+            if self.trivial_diff():
+                logger.info('Validating trivial review for %s', self.name)
+                self.validate_review()
+                return False
+            else:
+                return True
+        else:
+            return False
+
+    def trivial_diff(self):
+        """Returns true is the diff is trivial (only pkgver and sums changed)"""
+        diff = self._git._git_output('diff', 'reviewed')
+        for line in diff.splitlines():
+            if line.startswith(('-', '+')):
+                if not line.startswith(('--', '++', 'pkgver', 'md5sums', 'sha256sums', 'sha512sums', 'sha1sums'), 1):
+                    # TODO : make this more clean and secure, using regexs and not checking only the beginning
+                    return False
+        return True
 
     def validate_review(self):
         self._git.tag('reviewed', force=True)
