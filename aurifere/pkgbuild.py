@@ -49,7 +49,10 @@ class PKGBUILD:
 
     def version(self):
         """Returns the version of the package in the PKGBUILD."""
-        return '{}-{}'.format(self['version'], self['release'])
+        v = '{}-{}'.format(self['version'], self['release'])
+        if self['epoch']:
+            v = '{}:{}'.format(self['epoch'], v)
+        return v
 
     def all_depends(self):
         """Returns a list of all the packages needed to build the PKGBUILD."""
