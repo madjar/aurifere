@@ -1,4 +1,5 @@
 import logging
+import tempfile
 import urllib.request
 import tarfile
 import os
@@ -95,7 +96,21 @@ class AurPackage(Package):
             + url)
 
         with tarfile.open(tarfilename) as tar:
-            tar.extractall(self._repository.dir)
+            if self.name not in tar.getnames():
+                # Probably a split package, like python2-prettytable
+                # The tar does not have the usual form, so we extract is somewhere
+                # else, then copy the content to the right directory
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    tar.extractall(tmpdir)
+                    tardirs = os.listdir(tmpdir)
+                    assert len(tardirs) == 1, 'The tar contained more than one directory'
+                    tmppkgdir = os.path.join(tmpdir, tardirs[0])
+                    shutil.move(os.path.join(self.dir, '.git'),
+                                tmppkgdir)
+                    shutil.rmtree(self.dir)
+                    shutil.move(tmppkgdir, self.dir)
+            else:
+                tar.extractall(self._repository.dir)
 
     def _purge(self):
         """Deletes all files and dirs except .git"""
