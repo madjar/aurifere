@@ -52,6 +52,8 @@ class Git:
         self._git('commit', '--quiet', '-m', message)
 
     def tag(self, tag, force=False):
+        # ':' is quite common in version numbers, but not a valid tag
+        tag = tag.replace(':', '_')
         if force:
             self._git('tag', '--force', tag)
         else:

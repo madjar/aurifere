@@ -1,4 +1,6 @@
 __pycache__
 .idea
 aurifere.egg-info/
-
+/build
+/dist
+*~
