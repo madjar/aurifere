@@ -1,9 +1,9 @@
 import os
 import logging
 import shelve
-from .aur import AurPackage, NotInAURException
 from .common import DATA_DIR
 from .package import Package
+from .providers.aur import AurProvider, NotInAURException
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +27,13 @@ class Repository:
         return '<Repository("{}")>'.format(self.dir)
 
     def package(self, name, type="default"):
+        # TODO: add a proper provider for manual
         if name not in self._open_packages:
             if name in self.db:
                 type = self.db[name]
             if type == "aur":
                 try:
-                    package = AurPackage(name, self)
+                    package = Package(name, self, AurProvider)
                 except NotInAURException:
                     package = Package(name, self)
                     logger.warn('Package %s used to be in AUR but is not any '
@@ -43,7 +44,7 @@ class Repository:
                 package = Package(name, self)
             elif type == "default":
                 try:
-                    package = AurPackage(name, self)
+                    package = Package(name, self, AurProvider)
                     type = "aur"
                 except NotInAURException as e:
                     raise PackageNotInRepositoryException() from e

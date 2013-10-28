@@ -3,11 +3,12 @@ import tempfile
 import urllib.request
 import tarfile
 import os
+import os.path
 import shutil
 import AUR
-from .common import DATA_DIR
-from .pacman import get_satisfier_in_syncdb
-from .package import Package, NoPKGBUILDException
+from aurifere.common import DATA_DIR
+from aurifere.pacman import get_satisfier_in_syncdb
+from aurifere.package import NoPKGBUILDException
 
 
 NOT_IN_AUR_FILENAME = os.path.join(DATA_DIR, 'not_in_aur')
@@ -70,9 +71,9 @@ class NotInAURException(Exception):
     pass
 
 
-class AurPackage(Package):
+class AurProvider:
     """Represents an AUR package and handles the download."""
-    def __init__(self, name, repository):
+    def __init__(self, name, dir):
         if get_satisfier_in_syncdb(name):
             # package in the syncdb, so not in AUR
             raise NotInAURException(name)
@@ -81,7 +82,8 @@ class AurPackage(Package):
         if not aur_info_result:
             raise NotInAURException(name)
         self.aur_info = aur_info_result[0]
-        super().__init__(name, repository)
+        self.name = name
+        self.dir = dir
 
     def upstream_version(self):
         """Returns the version of the package in AUR."""
@@ -110,7 +112,9 @@ class AurPackage(Package):
                     shutil.rmtree(self.dir)
                     shutil.move(tmppkgdir, self.dir)
             else:
-                tar.extractall(self._repository.dir)
+                # Extract to the parent dir because the tar contains a
+                # dir with the right name
+                tar.extractall(os.path.dirname(self.dir))
 
     def _purge(self):
         """Deletes all files and dirs except .git"""
@@ -123,16 +127,8 @@ class AurPackage(Package):
             else:
                 shutil.rmtree(filename)
 
-    def _fetch_upstream(self):
-        """Updates the package if needed."""
-        try:
-            version = self.version()
-        except NoPKGBUILDException:
-            version = None
-        aur_version = self.upstream_version()
-        if not version or version != aur_version:
-            self._purge()
-            self._download()
-            self._pkgbuild = None  # Invalidate the cache
-            return aur_version
-        return None
+    def fetch_upstream(self):
+        """Updates the package."""
+        self._purge()
+        self._download()
+        self._pkgbuild = None  # Invalidate the cache

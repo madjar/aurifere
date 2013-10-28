@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="aurifere",
@@ -22,7 +22,7 @@ setup(
         "Topic :: System :: Systems Administration",
         ],
 
-    packages=['aurifere'],
+    packages=find_packages(),
     include_package_data=True,
     entry_points={'console_scripts': ['aurifere = aurifere.cli:main']}
 )

@@ -3,8 +3,8 @@ import os
 import subprocess
 from aurifere.pacman import installed
 from aurifere.pkgbuild import version_is_greater
-from .git import Git
-from .pkgbuild import PKGBUILD
+from aurifere.git import Git
+from aurifere.pkgbuild import PKGBUILD
 
 
 logger = logging.getLogger(__name__)
@@ -23,12 +23,13 @@ class NotReviewedException(Exception):
 
 
 class Package:
-    def __init__(self, name, repository):
+    def __init__(self, name, repository, provider_class=lambda *_: None):
         self.name = name
         self._repository = repository
         self.dir = os.path.join(repository.dir, name)
         self._git = Git(self.dir)
         self._pkgbuild = None
+        self.provider = provider_class(self.name, self.dir)
 
         if not os.path.exists(self.dir):
             self._git.init()
@@ -62,27 +63,32 @@ class Package:
         """Returns the version of the package in the repository."""
         return self.pkgbuild().version()
 
-    def upstream_version(self):
-        return None
-
     def upgrade_available(self):
+        """Returns true if there's a more recent version than the one
+        installed."""
+        if not self.provider:
+            return False  # If there's no upstream, then there's no update
         pkg = installed(self.name)
-        upstream_version = self.upstream_version()
+        upstream_version = self.provider.upstream_version()
         return (pkg and upstream_version and
                 version_is_greater(upstream_version, pkg.version))
 
     def update_from_upstream(self):
+        if not self.provider:
+            return False  # No upstream, no chocolate
+
         self._git.switch_branch('upstream')
-        new_version = self._fetch_upstream()
-        if new_version:
+        try:
+            version = self.version()
+        except NoPKGBUILDException:
+            version = None
+        new_version = self.provider.upstream_version()
+
+        if not version or version != new_version:
+            self.provider.fetch_upstream()
             self._git.commit_all(new_version)
             self._git.tag(new_version)
         self._git.switch_branch('master')
-
-    def _fetch_upstream(self):
-        """Fetches the package from upstream.
-        Returns the version number if there's a new version."""
-        pass
 
     def apply_modifications(self):
         # TODO merge modifications

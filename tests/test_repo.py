@@ -4,6 +4,7 @@ import tempfile
 from aurifere.repository import Repository
 from aurifere.package import Package
 
+
 class RepoTest(unittest.TestCase):
     def setUp(self):
         self.dir = tempfile.TemporaryDirectory()
@@ -14,5 +15,10 @@ class RepoTest(unittest.TestCase):
         self.dir.cleanup()
 
     def test_tag_exotic_version(self):
-        package = Package('testpkg', self.repo)
+        package = self.repo.package('testpkg', type='manual')
         package._git.tag('1:2.4.7')
+
+    def test_some_aur_package(self):
+        package = self.repo.package('aurifere-git')
+        self.assertEqual(package.pkgbuild()['name'], 'aurifere-git')
+        self.assertEqual(package.version(), package.provider.upstream_version())

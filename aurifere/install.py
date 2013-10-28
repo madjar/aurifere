@@ -1,6 +1,5 @@
 from collections import defaultdict
-from .aur import load_aur_cache
-from aurifere.aur import NotInAURException
+from aurifere.providers.aur import NotInAURException, load_aur_cache
 from aurifere.pacman import get_foreign_packages
 from .pacman import installed
 from .repository import PackageNotInRepositoryException
