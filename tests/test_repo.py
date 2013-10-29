@@ -2,7 +2,6 @@ import os
 import unittest
 import tempfile
 from aurifere.repository import Repository
-from aurifere.package import Package
 
 
 class RepoTest(unittest.TestCase):
