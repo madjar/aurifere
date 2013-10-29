@@ -9,8 +9,8 @@ Options:
   -v --verbose
 
 """
-from docopt import docopt
-import colorama
+from .vendor.docopt import docopt
+from .vendor import colorama
 from .install import Install
 from .repository import default_repository
 

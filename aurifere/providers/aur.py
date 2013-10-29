@@ -5,7 +5,7 @@ import tarfile
 import os
 import os.path
 import shutil
-import AUR
+from aurifere.vendor import AUR
 from aurifere.common import DATA_DIR
 from aurifere.pacman import get_satisfier_in_syncdb
 from aurifere.package import NoPKGBUILDException
