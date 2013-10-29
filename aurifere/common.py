@@ -1,5 +1,4 @@
 import os
-from XyneXDG.BaseDirectory import get_data_home
+from xdg.BaseDirectory import save_data_path
 
-DATA_DIR = os.path.join(get_data_home(), 'aurifere')
-os.makedirs(DATA_DIR, exist_ok=True)
+DATA_DIR = save_data_path('aurifere')
