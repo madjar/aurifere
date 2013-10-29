@@ -23,6 +23,15 @@ def hl(text):
     return colorama.Style.BRIGHT + text + colorama.Style.RESET_ALL
 
 
+def confirm(message):
+    prompt = '{}? (Y/n)'.format(message)
+    choice = input(prompt)
+    if choice in ('no', 'n', 'N'):
+        return False
+    else:
+        return True
+
+
 def review_package(install, package):
     print('Reviewing {} {}. Last reviewed version was {}'.format(
         hl(package.name),
@@ -34,8 +43,7 @@ def review_package(install, package):
         .format(comma_separated_package_list(install.dependencies[package])))
     input('About to show diff ...')
     package._git._git('diff', 'reviewed', '--color')
-    if argh.confirm('Validate review for {} '.format(hl(package.name)),
-                    default=True):
+    if confirm('Validate review for {} '.format(hl(package.name))):
         package.validate_review()
     else:
         # TODO : maybe we can be a little more diplomatic
@@ -65,7 +73,7 @@ def review_and_install(installer):
         print('Packages to review : {}'
         .format(comma_separated_package_list(packages_to_review)))
 
-    if not argh.confirm('Do you confirm', default=True):
+    if not confirm('Do you confirm'):
         return
 
     for package in packages_to_review:
