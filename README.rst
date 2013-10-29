@@ -17,7 +17,7 @@ Installing
 
 There is no stable release of Aurifere yet, but if you are feeling adventurous, install `aurifere-git`__ from AUR.
 
-__ http://aur.archlinux.org/packages.php?ID=56754
+__ https://aur.archlinux.org/packages/aurifere-git/
 
 
 Usage
