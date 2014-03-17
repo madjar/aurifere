@@ -86,6 +86,7 @@ class Package:
 
         if not version or version != new_version:
             self.provider.fetch_upstream()
+            self._pkgbuild = None
             self._git.commit_all(new_version)
             self._git.tag(new_version)
         self._git.switch_branch('master')
