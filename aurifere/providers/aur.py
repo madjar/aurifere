@@ -5,6 +5,7 @@ import tarfile
 import os
 import os.path
 import shutil
+import atexit
 from aurifere.vendor import AUR
 from aurifere.common import DATA_DIR
 from aurifere.pacman import get_satisfier_in_syncdb
@@ -31,7 +32,7 @@ class _LoggingAUR(AUR.AUR):
         else:
             self.not_in_aur = set()
 
-    def __del__(self):
+    def close_cache(self):
         with open(NOT_IN_AUR_FILENAME, 'w') as f:
             f.write('\n'.join(self.not_in_aur))
 
@@ -58,6 +59,7 @@ def aur_info(pkgs):
     global _aur_object
     if not _aur_object:
         _aur_object = _LoggingAUR()
+        atexit.register(_aur_object.close_cache)
     return _aur_object.info(pkgs)
 
 
